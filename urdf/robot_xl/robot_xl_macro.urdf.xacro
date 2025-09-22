@@ -1,0 +1,9 @@
+<?xml version='1.0'?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+        <!--
+    Wrapper macro to provide the expected filename for installed xacro includes.
+    This simply includes the existing robot_xl_macro.urdf.xacro so both source
+    and installed-time includes that reference robot_xl_macro.urdf.xacro will work.
+  -->
+        <xacro:include filename="$(find robot_description)/urdf/robot_xl/robot_xl_macro.urdf.xacro" />
+</robot>
