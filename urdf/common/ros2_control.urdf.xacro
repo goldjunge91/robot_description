@@ -27,7 +27,7 @@
     </ros2_control>
   </xacro:macro>
 
-  <xacro:macro name="robot_system" params="name:='robot_system' namespace:=''">
+  <xacro:macro name="robot_system" params="name:='robot_system' namespace:='' include_nerf:='False'">
     <xacro:property name="ns" value="${namespace + '/' if namespace != '' else ''}" />
 
     <ros2_control name="${ns}${name}" type="system">
@@ -61,10 +61,33 @@
         <state_interface name="position" />
         <state_interface name="velocity" />
       </joint>
+
+      <!-- Optional Nerf launcher joints (servos + ESCs) -->
+      <xacro:if value="${include_nerf}">
+        <!-- Pan/Tilt servos: position interfaces -->
+        <joint name="pan_servo_joint">
+          <command_interface name="position" />
+          <state_interface name="position" />
+        </joint>
+        <joint name="tilt_servo_joint">
+          <command_interface name="position" />
+          <state_interface name="position" />
+        </joint>
+
+        <!-- Flywheel ESCs: velocity interfaces (normalized or rad/s per HW) -->
+        <joint name="esc_left_joint">
+          <command_interface name="velocity" />
+          <state_interface name="velocity" />
+        </joint>
+        <joint name="esc_right_joint">
+          <command_interface name="velocity" />
+          <state_interface name="velocity" />
+        </joint>
+      </xacro:if>
     </ros2_control>
   </xacro:macro>
 
-  <xacro:macro name="gz_robot_system" params="name:='robot_system' namespace:=''">
+  <xacro:macro name="gz_robot_system" params="name:='robot_system' namespace:='' include_nerf:='False'">
     <xacro:property name="ns" value="${namespace + '/' if namespace != '' else ''}" />
 
     <ros2_control name="${ns}${name}" type="system">
@@ -95,6 +118,26 @@
         <state_interface name="position" />
         <state_interface name="velocity" />
       </joint>
+
+      <!-- Optional Nerf launcher joints for simulation -->
+      <xacro:if value="${include_nerf}">
+        <joint name="pan_servo_joint">
+          <command_interface name="position" />
+          <state_interface name="position" />
+        </joint>
+        <joint name="tilt_servo_joint">
+          <command_interface name="position" />
+          <state_interface name="position" />
+        </joint>
+        <joint name="esc_left_joint">
+          <command_interface name="velocity" />
+          <state_interface name="velocity" />
+        </joint>
+        <joint name="esc_right_joint">
+          <command_interface name="velocity" />
+          <state_interface name="velocity" />
+        </joint>
+      </xacro:if>
 
       <sensor name="${ns}imu">
         <state_interface name="orientation.x" />

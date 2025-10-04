@@ -27,6 +27,7 @@ from launch.substitutions import (
     PythonExpression,
 )
 from launch_ros.actions import Node, SetParameter, SetRemap
+from launch_ros.parameter_descriptions import ParameterValue
 from launch_ros.substitutions import FindPackageShare
 
 
@@ -41,7 +42,9 @@ def contains_cam_component(yaml_fil):
 def launch_setup(context, *args, **kwargs):
     components_config = LaunchConfiguration("components_config").perform(context)
     configuration = LaunchConfiguration("configuration").perform(context)
-    controller_config = LaunchConfiguration("controller_config", default="").perform(context)
+    controller_config = LaunchConfiguration("controller_config", default="").perform(
+        context
+    )
     manipulator_serial_port = LaunchConfiguration(
         "manipulator_serial_port", default="/dev/ttyUSB0"
     ).perform(context)
@@ -50,6 +53,9 @@ def launch_setup(context, *args, **kwargs):
     namespace = LaunchConfiguration("namespace", default="").perform(context)
     robot_model = LaunchConfiguration("robot_model").perform(context)
     use_sim = LaunchConfiguration("use_sim", default="False").perform(context)
+    include_nerf_launcher = LaunchConfiguration(
+        "include_nerf_launcher", default="False"
+    ).perform(context)
 
     if robot_model != "robot_xl" and configuration != "basic":
         raise ValueError(
@@ -68,7 +74,9 @@ def launch_setup(context, *args, **kwargs):
         [
             PathJoinSubstitution([FindExecutable(name="xacro")]),
             " ",
-            PathJoinSubstitution([FindPackageShare("robot_description"), "urdf", urdf_file]),
+            PathJoinSubstitution(
+                [FindPackageShare("robot_description"), "urdf", urdf_file]
+            ),
             " components_config:=",
             components_config,
             " configuration:=",
@@ -77,6 +85,8 @@ def launch_setup(context, *args, **kwargs):
             controller_config,
             " include_camera_mount:=",
             include_camera_mount,
+            " include_nerf_launcher:=",
+            include_nerf_launcher,
             " manipulator_serial_port:=",
             manipulator_serial_port,
             " mecanum:=",
@@ -87,7 +97,10 @@ def launch_setup(context, *args, **kwargs):
             use_sim,
         ]
     )
-    robot_description = {"robot_description": robot_description_content}
+    # Ensure the expanded xacro/URDF is passed as a string parameter (avoid YAML parsing issues)
+    robot_description = {
+        "robot_description": ParameterValue(robot_description_content, value_type=str)
+    }
 
     robot_state_pub_node = Node(
         package="robot_state_publisher",
@@ -135,7 +148,13 @@ def generate_launch_description():
         description=(
             "Specify configuration packages. Currently only robot XL has available packages"
         ),
-        choices=["basic", "telepresence", "autonomy", "manipulation", "manipulation_pro"],
+        choices=[
+            "basic",
+            "telepresence",
+            "autonomy",
+            "manipulation",
+            "manipulation_pro",
+        ],
     )
 
     default_mecanum_value = PythonExpression(["'", robot_model, "' == 'robot_xl'"])
@@ -143,6 +162,13 @@ def generate_launch_description():
         "mecanum",
         default_value=default_mecanum_value,
         description="Whether to use mecanum drive controller, otherwise use diff drive",
+        choices=["True", "False"],
+    )
+
+    declare_include_nerf_arg = DeclareLaunchArgument(
+        "include_nerf_launcher",
+        default_value="False",
+        description="Whether to include the Nerf launcher component in the URDF",
         choices=["True", "False"],
     )
 
@@ -161,6 +187,7 @@ def generate_launch_description():
             declare_robot_model_arg,
             declare_components_config_arg,  # depends on configuration and robot model
             declare_mecanum_arg,  # mecanum base on robot_model arg
+            declare_include_nerf_arg,
             publish_robot_description,
         ]
     )

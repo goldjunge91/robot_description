@@ -1,0 +1,107 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="nerf_launcher" params="parent_link xyz:='0.0 0.0 0.0' rpy:='0.0 0.0 0.0' tf_prefix:='' launcher_angle:=0.0">
+
+    <xacro:property name="prefix" value="${tf_prefix + '_' if tf_prefix != '' else ''}" />
+
+    <!-- Simple nerf launcher model with controllable pan/tilt and virtual ESC joints -->
+    <xacro:property name="connector_length" value="0.04" />
+    <xacro:property name="connector_radius" value="0.008" />
+    <xacro:property name="barrel_length" value="0.12" />
+    <xacro:property name="barrel_radius" value="0.01" />
+
+    <xacro:property name="pan_min" value="${-pi/2}" />
+    <xacro:property name="pan_max" value="${pi/2}" />
+    <xacro:property name="tilt_min" value="${-0.8}" />
+    <xacro:property name="tilt_max" value="${0.8}" />
+
+    <!-- Mount point on the parent -->
+    <joint name="${parent_link.rstrip('_link')}_to_${prefix}nerf_mount_joint" type="fixed">
+      <origin xyz="${xyz}" rpy="${rpy}" />
+      <parent link="${parent_link}" />
+      <child link="${prefix}nerf_mount_link" />
+    </joint>
+    <link name="${prefix}nerf_mount_link" />
+
+    <!-- Pan servo (yaw around Z) - exposed as pan_servo_joint for ros2_control -->
+    <joint name="pan_servo_joint" type="revolute">
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <parent link="${prefix}nerf_mount_link" />
+      <child link="${prefix}nerf_pan_link" />
+      <axis xyz="0 0 1" />
+      <limit lower="${pan_min}" upper="${pan_max}" effort="5.0" velocity="2.0" />
+      <dynamics damping="0.2" friction="0.1" />
+    </joint>
+    <link name="${prefix}nerf_pan_link" />
+
+    <!-- Tilt servo (pitch around Y) - exposed as tilt_servo_joint for ros2_control -->
+    <joint name="tilt_servo_joint" type="revolute">
+      <origin xyz="0 0 0.015" rpy="0 0 0" />
+      <parent link="${prefix}nerf_pan_link" />
+      <child link="${prefix}nerf_tilt_link" />
+      <axis xyz="0 1 0" />
+      <limit lower="${tilt_min}" upper="${tilt_max}" effort="5.0" velocity="2.0" />
+      <dynamics damping="0.2" friction="0.1" />
+    </joint>
+    <link name="${prefix}nerf_tilt_link" />
+
+    <!-- Geometry: connector + barrel attached to tilt link -->
+    <joint name="${prefix}nerf_tilt_to_${prefix}nerf_connector_joint" type="fixed">
+      <origin xyz="0.0 0.0 0.02" rpy="${launcher_angle} 0 0" />
+      <parent link="${prefix}nerf_tilt_link" />
+      <child link="${prefix}nerf_connector_link" />
+    </joint>
+    <link name="${prefix}nerf_connector_link">
+      <visual>
+        <geometry>
+          <cylinder radius="${connector_radius}" length="${connector_length}" />
+        </geometry>
+        <origin xyz="0.0 0.0 ${connector_length/2.0}" rpy="0.0 0.0 0.0" />
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${connector_radius}" length="${connector_length}" />
+        </geometry>
+        <origin xyz="0.0 0.0 ${connector_length/2.0}" rpy="0.0 0.0 0.0" />
+      </collision>
+    </link>
+
+    <joint name="${prefix}nerf_connector_to_${prefix}nerf_barrel_joint" type="fixed">
+      <origin xyz="0.0 0.0 ${connector_length}" rpy="0.0 0.0 0.0" />
+      <parent link="${prefix}nerf_connector_link" />
+      <child link="${prefix}nerf_barrel_link" />
+    </joint>
+    <link name="${prefix}nerf_barrel_link">
+      <visual>
+        <geometry>
+          <cylinder radius="${barrel_radius}" length="${barrel_length}" />
+        </geometry>
+        <origin xyz="0.0 0.0 ${barrel_length/2.0}" rpy="${pi/2} 0.0 0.0" />
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${barrel_radius}" length="${barrel_length}" />
+        </geometry>
+        <origin xyz="0.0 0.0 ${barrel_length/2.0}" rpy="${pi/2} 0.0 0.0" />
+      </collision>
+    </link>
+
+    <!-- Virtual ESC joints (no geometry) for flywheels -->
+    <joint name="esc_left_joint" type="continuous">
+      <origin xyz="0.02 0.03 0.0" rpy="0 0 0" />
+      <parent link="${prefix}nerf_mount_link" />
+      <child link="${prefix}esc_left_link" />
+      <axis xyz="0 0 1" />
+    </joint>
+    <link name="${prefix}esc_left_link" />
+
+    <joint name="esc_right_joint" type="continuous">
+      <origin xyz="0.02 -0.03 0.0" rpy="0 0 0" />
+      <parent link="${prefix}nerf_mount_link" />
+      <child link="${prefix}esc_right_link" />
+      <axis xyz="0 0 1" />
+    </joint>
+    <link name="${prefix}esc_right_link" />
+
+  </xacro:macro>
+</robot>

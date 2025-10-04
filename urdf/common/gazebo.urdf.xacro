@@ -3,7 +3,8 @@
 
   <xacro:macro name="controller" params="config_file namespace:=''">
     <gazebo>
-      <plugin filename="ign_ros2_control-system" name="ign_ros2_control::IgnitionROS2ControlPlugin">
+      <!-- Gazebo (Ignition/ros_gz) ros2_control system plugin -->
+      <plugin filename="gz-ros2-control-system" name="gz_ros2_control::GazeboSimSystem">
         <parameters>${config_file}</parameters>
         <ros>
           <namespace>${namespace}</namespace>
