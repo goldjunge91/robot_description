@@ -7,7 +7,9 @@ install
 site/*
 .pytest_cache
 /__pycache__/
-/__pycache__/*
+__pycache__*
+/__pycache__/
+*.pyc
 .docs/ROS2_Humble_docs/
 .env
 /.env
@@ -74,3 +76,4 @@ build
 .project
 .pydevproject
 .settings
+.gitignore
