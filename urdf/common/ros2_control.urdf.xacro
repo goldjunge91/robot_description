@@ -33,7 +33,7 @@
     <ros2_control name="${ns}${name}" type="system">
       <hardware>
         <plugin>robot_hardware_interfaces/RobotSystem</plugin>
-        <param name="connection_timeout_ms">30000</param>
+        <param name="connection_timeout_ms">5000</param>
         <param name="connection_check_period_ms">1000</param>
         <!-- order of velocity commands to be published in motors_cmd Float32MultiArray msg -->
         <param name="velocity_command_joint_order">
