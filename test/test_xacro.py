@@ -13,14 +13,29 @@
 # limitations under the License.
 
 import itertools
-import os
+from pathlib import Path
 
 import xacro
 from ament_index_python.packages import get_package_share_directory
 
 
+def _available_robot_models():
+    description_share = Path(get_package_share_directory("robot_description"))
+    urdf_dir = description_share / "urdf"
+    if not urdf_dir.is_dir():
+        return []
+    return [
+        urdf.name.replace(".urdf.xacro", "")
+        for urdf in urdf_dir.glob("*.urdf.xacro")
+    ]
+
+
 def test_robot_description_parsing():
-    robot_model_values = ["robot", "robot_xl"]
+    robot_model_values = _available_robot_models()
+    assert (
+        robot_model_values
+    ), "Expected at least one robot URDF to be available for parsing"
+
     mecanum_values = ["True", "False"]
 
     all_combinations = list(
@@ -33,13 +48,11 @@ def test_robot_description_parsing():
     for combination in all_combinations:
         robot_model, mecanum = combination
 
-        mappings = {
-            "mecanum": mecanum,
-        }
-        robot_description = get_package_share_directory("robot_description")
-        xacro_path = os.path.join(robot_description, "urdf", f"{robot_model}.urdf.xacro")
+        mappings = {"mecanum": mecanum}
+        description_share = Path(get_package_share_directory("robot_description"))
+        xacro_path = description_share / "urdf" / f"{robot_model}.urdf.xacro"
         try:
-            xacro.process_file(xacro_path, mappings=mappings)
+            xacro.process_file(str(xacro_path), mappings=mappings)
         except xacro.XacroException as e:
             assert (
                 False
