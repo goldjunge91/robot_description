@@ -482,7 +482,7 @@ components:
 - **robot_state_publisher**: TF tree publishing
 - **joint_state_publisher**: Joint state management (for testing)
 - **urdf**: URDF parsing and validation
-- **husarion_components_description**: Component xacro files (optional)
+- **components_description**: Component xacro files (optional)
 
 ## Troubleshooting
 

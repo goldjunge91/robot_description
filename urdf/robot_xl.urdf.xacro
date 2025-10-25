@@ -11,7 +11,7 @@
   <xacro:arg name="namespace" default="" />
   <xacro:arg name="use_sim" default="false" />
   <xacro:include filename="$(find robot_description)/urdf/robot_xl/robot_xl_macro.urdf.xacro" ns="husarion" />
-  <xacro:include filename="$(find husarion_components_description)/urdf/components.urdf.xacro" ns="components" />
+  <xacro:include filename="$(find components_description)/urdf/components.urdf.xacro" ns="components" />
   <!-- <xacro:husarion.robot_xl controller_config="$(arg controller_config)" include_camera_mount="$(arg include_camera_mount)" mecanum="$(arg mecanum)" namespace="$(arg namespace)" use_sim="$(arg use_sim)" /> -->
   <xacro:husarion.robot_xl controller_config="$(arg controller_config)" include_camera_mount="$(arg include_camera_mount)" include_nerf_launcher="$(arg include_nerf_launcher)" mecanum="$(arg mecanum)" namespace="$(arg namespace)" use_sim="$(arg use_sim)" />
   <xacro:components.create_components components_config_path="$(arg components_config)" namespace="" use_sim="$(arg use_sim)" />
