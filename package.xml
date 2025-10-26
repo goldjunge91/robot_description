@@ -6,9 +6,6 @@
   <description>The robot_description package</description>
   <maintainer email="support@admin.com">goldjunge091</maintainer>
   <license>Apache License 2.0</license>
-  <author email="krzysztof.wojciechowski@husarion.com">Krzysztof Wojciechowski</author>
-  <author email="maciej.stepien@husarion.com">Maciej Stepien</author>
-  <author email="jakub.delicat@husarion.com">Jakub Delicat</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <exec_depend>components_description</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
