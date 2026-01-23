@@ -252,9 +252,9 @@ graph TB
     end
     
     subgraph "ROS2 Topics"
-        SCAN[/scan<br/>LaserScan]
-        IMG[/camera/image_raw<br/>Image]
-        IMU_DATA[/imu/data<br/>Imu]
+        SCAN["/"scan<br/>LaserScan]
+        IMG["/"camera/image_raw<br/>Image]
+        IMU_DATA["/"imu/data<br/>Imu]
     end
     
     RC_PLUGIN -->|simulates| HWI[Hardware Interface]
@@ -334,16 +334,6 @@ graph TB
     
     style BASE fill:#4CAF50
 ```
-
-### Mass Properties
-
-| Component | Mass (kg) | Inertia |
-|-----------|-----------|---------|
-| Base Link | 2.5 | Calculated from box |
-| Wheel (each) | 0.1 | Calculated from cylinder |
-| IMU | 0.01 | Negligible |
-| Camera | 0.05 | Negligible |
-| LiDAR | 0.2 | Calculated from cylinder |
 
 ## Xacro Macros
 
