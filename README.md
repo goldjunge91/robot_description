@@ -1,6 +1,3 @@
-
-```markdown name=src/robot_description/README.md
-```markdown
 # robot_description
 
 Enthält URDF / XACRO, Meshes und components_config für das my_steel Chassis.
