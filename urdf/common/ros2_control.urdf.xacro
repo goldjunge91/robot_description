@@ -92,7 +92,8 @@
 
     <ros2_control name="${ns}${name}" type="system">
       <hardware>
-        <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+        <!-- <plugin>gz_ros2_control/GazeboSimSystem</plugin> -->
+        <plugin>ign_ros2_control/IgnitionSystem</plugin>
         <!-- <xacro:if value="${simulation_engine == 'webots'}">
           <plugin>webots_ros2_control::Ros2ControlSystem</plugin>
         </xacro:if> -->
