@@ -172,6 +172,13 @@ def generate_launch_description():
         choices=["True", "False"],
     )
 
+    declare_use_sim_arg = DeclareLaunchArgument(
+        "use_sim",
+        default_value="False",
+        description="Whether to use simulation (Gazebo) or real hardware",
+        choices=["True", "False"],
+    )
+
     declare_robot_model_arg = DeclareLaunchArgument(
         "robot_model",
         default_value=EnvironmentVariable("ROBOT_MODEL_NAME", default_value=""),
@@ -188,6 +195,7 @@ def generate_launch_description():
             declare_components_config_arg,  # depends on configuration and robot model
             declare_mecanum_arg,  # mecanum base on robot_model arg
             declare_include_nerf_arg,
+            declare_use_sim_arg,
             publish_robot_description,
         ]
     )
