@@ -27,7 +27,7 @@
     </xacro:if>
     <!-- Optional NERF launcher component -->
     <xacro:if value="${include_nerf_launcher}">
-      <xacro:nerf_launcher.nerf_launcher parent_link="cover_link" xyz="0.08 0.0 0.02" launcher_angle="-0.15" />
+      <xacro:nerf_launcher.nerf_launcher parent_link="cover_link" xyz="0.005 0.0 0.072" rpy="-0.0873 0 1.5708" />
     </xacro:if>
     <!-- RPLidar Laser Scanner -->
     <xacro:slamtec_rplidar parent_link="cover_link" xyz="0.0 0.0 0.0" rpy="0.0 0.0 0.0" robot_namespace="${namespace}" model="s3" />
